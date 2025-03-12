@@ -25,6 +25,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the Django project into the container
 COPY . .
 
+# Use an entrypoint script for more flexibility
+COPY entrypoint.sh /entrypoint.sh
+# Ensure correct line endings for entrypoint.sh if built on Windows
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
+
 # Change ownership of the application files to the non-root user
 RUN chown -R django:django /app
 
@@ -34,12 +39,6 @@ USER django
 # Expose the port the app will run on
 EXPOSE 8000
 
-# Use an entrypoint script for more flexibility
-COPY entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
 # Start the Django development server
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
-# Ensure correct line endings for entrypoint.sh if built on Windows
-RUN sed -i 's/\r$//' /entrypoint.sh
