@@ -22,16 +22,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the Django project into the container
-COPY . .
+# Make sure Django is installed
+RUN pip install --no-cache-dir Django==5.1.7
 
-# Use an entrypoint script for more flexibility
+# Copy the entrypoint script
 COPY entrypoint.sh /entrypoint.sh
+
 # Ensure correct line endings for entrypoint.sh if built on Windows
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
+# Copy the Django project into the container
+COPY . .
+
 # Change ownership of the application files to the non-root user
-RUN chown -R django:django /app
+RUN chown -R django:django /app /entrypoint.sh
 
 # Switch to the non-root user
 USER django

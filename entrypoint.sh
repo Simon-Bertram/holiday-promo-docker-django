@@ -33,6 +33,13 @@ until postgres_ready; do
 done
 echo "PostgreSQL is available"
 
+# Check if this is a fresh install
+if [ ! -f "/app/manage.py" ]; then
+    echo "Django project not found. Creating initial project structure..."
+    django-admin startproject config .
+    echo "Django project created successfully!"
+fi
+
 # Apply database migrations
 echo "Applying database migrations..."
 python manage.py migrate
