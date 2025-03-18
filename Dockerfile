@@ -34,6 +34,9 @@ RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 # Copy the Django project into the container
 COPY . .
 
+# Create staticfiles directory and set permissions
+RUN mkdir -p /app/staticfiles && chown -R django:django /app/staticfiles
+
 # Change ownership of the application files to the non-root user
 RUN chown -R django:django /app /entrypoint.sh
 
